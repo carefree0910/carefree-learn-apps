@@ -11,9 +11,11 @@ class MultiPage:
         self.pages.append({"title": title, "func": func})
 
     def run(self) -> None:
+        st.markdown("---")
         page = st.sidebar.selectbox(
-            "App Navigation",
+            "",
             self.pages,
             format_func=lambda p: p["title"],
         )
+        st.sidebar.markdown("---")
         page["func"]()
