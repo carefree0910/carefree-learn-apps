@@ -11,13 +11,13 @@ from skimage import io
 from skimage.filters import gaussian
 from skimage.filters import unsharp_mask
 from onnxruntime import InferenceSession
-from torchvision.transforms import Compose
 
 from .data import RescaleT
 from .data import ToNormalizedArray
 from ..toolkit import naive_cutout
 from ..toolkit import min_max_normalize
 from ..toolkit import alpha_matting_cutout
+from ..toolkit import Compose
 from ...constants import INPUT_KEY
 from ...constants import WARNING_PREFIX
 
