@@ -10,4 +10,4 @@ pip-wheel-metadata
 dist/*
 **/mlruns/*
 *.zip
-cflearn_apps/models/*
+cflearn_apps/models/*.onnx
