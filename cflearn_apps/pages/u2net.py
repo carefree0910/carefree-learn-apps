@@ -30,7 +30,7 @@ def get_alpha(api: U2NetAPI, src: np.ndarray) -> np.ndarray:
 
 
 def app() -> None:
-    st.title("Cutout Demo")
+    st.title("Salient Object Detection")
 
     models = sorted(supported_models)
     model = st.sidebar.radio("Select a model", models)

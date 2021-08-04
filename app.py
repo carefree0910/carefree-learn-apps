@@ -11,8 +11,10 @@ st.image(
     "&pattern=Floating%20Cogs&stargazers=1"
 )
 
-cflearn_link = "[carefree-learn](https://github.com/carefree0910/carefree-learn/tree/v0.2.x)"
-st.sidebar.title(f"Demos for {cflearn_link}")
+st.sidebar.title(
+    "Demos for [carefree-learn]"
+    "(https://github.com/carefree0910/carefree-learn/tree/v0.2.x)"
+)
 
-app.add_page("Cutout", cflearn_apps.u2net.app)
+app.add_page("Salient Object Detection", cflearn_apps.u2net.app)
 app.run()
