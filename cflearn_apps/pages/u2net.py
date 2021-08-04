@@ -5,7 +5,9 @@ import numpy as np
 import streamlit as st
 
 from PIL import Image
+from cflearn import cv
 from cflearn.misc.toolkit import to_uint8
+from cflearn.api.cv.models.u2net import cutout
 
 from .utils import download_with_progress
 from ..constants import MODEL_FOLDER
@@ -20,6 +22,12 @@ supported_models = {
 def get_url(model: str) -> str:
     prefix = "https://github.com/carefree0910/carefree-learn-models/releases/download"
     return f"{prefix}/{supported_models[model]}/{model}.onnx"
+
+
+@st.cache
+def get_alpha(api: cv.U2NetAPIWithONNX, src: np.ndarray) -> np.ndarray:
+    with st.spinner("Generating alpha mask..."):
+        return api._get_alpha(src)
 
 
 def app() -> None:
@@ -46,10 +54,10 @@ def app() -> None:
     if uploaded_file is not None:
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image")
-        with st.spinner("Generating Cutout mask & RGBA mage..."):
-            arr = np.array(image).astype(np.float32) / 255.0
-            alpha, rgba = api._generate(arr, smooth, tight, None)
-            if thresh is not None:
-                alpha = (alpha > thresh).astype(np.float32)
+        arr = np.array(image).astype(np.float32) / 255.0
+        alpha = get_alpha(api, arr)
+        alpha, rgba = cutout(arr, alpha, smooth, tight, None)
+        if thresh is not None:
+            alpha = (alpha > thresh).astype(np.float32)
         st.image(to_uint8(alpha), caption="Mask")
         st.image(rgba, caption="RGBA")
