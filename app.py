@@ -14,4 +14,5 @@ st.image(
 cflearn_link = "[carefree-learn](https://github.com/carefree0910/carefree-learn/tree/v0.2.x)"
 st.sidebar.title(f"Demos for {cflearn_link}")
 
+app.add_page("Cutout", cflearn_apps.u2net.app)
 app.run()
