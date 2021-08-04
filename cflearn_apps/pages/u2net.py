@@ -12,6 +12,7 @@ from ..constants import MODEL_FOLDER
 
 
 supported_models = {
+    "large_cascade_lite_512_bce_iou": "20210804.0",
     "lite_finetune": "20210804.0",
 }
 
