@@ -1,16 +1,15 @@
 import os
-import cflearn
 
 import numpy as np
 import streamlit as st
 
 from PIL import Image
-from cflearn import cv
-from cflearn.misc.toolkit import to_uint8
-from cflearn.api.cv.models.u2net import cutout
 
 from .utils import download_with_progress
 from ..constants import MODEL_FOLDER
+from ..src.toolkit import to_uint8
+from ..src.u2net.core import cutout
+from ..src.u2net.core import U2NetAPI
 
 
 supported_models = {
@@ -25,7 +24,7 @@ def get_url(model: str) -> str:
 
 
 @st.cache
-def get_alpha(api: cv.U2NetAPIWithONNX, src: np.ndarray) -> np.ndarray:
+def get_alpha(api: U2NetAPI, src: np.ndarray) -> np.ndarray:
     with st.spinner("Generating alpha mask..."):
         return api._get_alpha(src)
 
@@ -48,7 +47,7 @@ def app() -> None:
         download_with_progress(url, onnx_path)
 
     with st.spinner(f"Loading onnx model ({model})..."):
-        api = cflearn.cv.U2NetAPIWithONNX(onnx_path)
+        api = U2NetAPI(onnx_path)
     st.markdown(f"**onnx model `{model}` loaded!**")
     uploaded_file = st.file_uploader("Please upload your file")
     if uploaded_file is not None:
