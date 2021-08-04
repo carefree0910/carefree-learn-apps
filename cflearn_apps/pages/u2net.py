@@ -27,6 +27,10 @@ def app() -> None:
 
     models = sorted(supported_models)
     model = st.sidebar.radio("Select a model", models)
+    use_threshold = st.sidebar.radio("Use threshold", [True, False])
+    thresh = None
+    if use_threshold:
+        thresh = st.sidebar.slider("Threshold", min_value=0.0, max_value=1.0, value=0.5)
     smooth = st.sidebar.slider("Smooth", min_value=0, max_value=20, value=4)
     tight = st.sidebar.slider("Tight", min_value=0.0, max_value=1.0, value=0.9)
 
@@ -45,5 +49,7 @@ def app() -> None:
         with st.spinner("Generating Cutout mask & RGBA mage..."):
             arr = np.array(image).astype(np.float32) / 255.0
             alpha, rgba = api._generate(arr, smooth, tight, None)
+            if thresh is not None:
+                alpha = (alpha > thresh).astype(np.float32)
         st.image(to_uint8(alpha), caption="Mask")
         st.image(rgba, caption="RGBA")
