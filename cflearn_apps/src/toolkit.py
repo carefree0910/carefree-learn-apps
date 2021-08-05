@@ -97,10 +97,10 @@ class Compose:
     def __init__(self, transforms: List[Any]):
         self.transforms = transforms
 
-    def __call__(self, img: np.ndarray) -> np.ndarray:
+    def __call__(self, inp: Any) -> Any:
         for t in self.transforms:
-            img = t(img)
-        return img
+            inp = t(inp)
+        return inp
 
     def __repr__(self) -> str:
         format_string = self.__class__.__name__ + '('
