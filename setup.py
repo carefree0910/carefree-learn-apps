@@ -17,7 +17,6 @@ setup(
         "scikit-image",
         "scipy>=1.2.1",
         "numpy>=1.19.2",
-        "pymatting>=1.1.1",
     ],
     author="carefree0910",
     author_email="syameimaru.saki@gmail.com",

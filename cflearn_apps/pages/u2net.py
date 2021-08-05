@@ -57,6 +57,6 @@ def app() -> None:
         alpha = get_alpha(api, arr)
         if thresh is not None:
             alpha = (alpha > thresh).astype(np.float32)
-        alpha, rgba = cutout(arr, alpha, smooth, tight, None)
+        alpha, rgba = cutout(arr, alpha, smooth, tight)
         st.image(to_uint8(alpha), caption="Mask")
         st.image(rgba, caption="RGBA")
