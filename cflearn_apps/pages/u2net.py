@@ -34,7 +34,7 @@ def app() -> None:
 
     models = sorted(supported_models)
     model = st.sidebar.radio("Select a model", models)
-    use_threshold = st.sidebar.radio("Use threshold", [True, False])
+    use_threshold = st.sidebar.radio("Use threshold", [True, False], index=1)
     thresh = None
     if use_threshold:
         thresh = st.sidebar.slider("Threshold", min_value=0.0, max_value=1.0, value=0.5)
