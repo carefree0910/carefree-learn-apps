@@ -4,12 +4,12 @@ import numpy as np
 import streamlit as st
 
 from PIL import Image
+from cflearn_deploy.toolkit import to_uint8
+from cflearn_deploy.u2net.core import cutout
+from cflearn_deploy.u2net.core import U2NetAPI
 
 from .utils import download_with_progress
 from ..constants import MODEL_FOLDER
-from ..src.toolkit import to_uint8
-from ..src.u2net.core import cutout
-from ..src.u2net.core import U2NetAPI
 
 
 supported_models = {
