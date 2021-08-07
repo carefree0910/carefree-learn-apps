@@ -1,39 +1,24 @@
-import os
-
 import numpy as np
 import streamlit as st
 
 from PIL import Image
+from requests import Response
+from skimage.transform import resize
+from cflearn_deploy.toolkit import cutout
 from cflearn_deploy.toolkit import to_uint8
-from cflearn_deploy.u2net.core import cutout
-from cflearn_deploy.u2net.core import U2NetAPI
-
-from .utils import download_with_progress
-from ..constants import MODEL_FOLDER
-
-
-supported_models = {
-    "large_cascade_lite_512_bce_iou": "20210804.0",
-    "lite_finetune": "20210804.0",
-}
-
-
-def get_url(model: str) -> str:
-    prefix = "https://github.com/carefree0910/carefree-learn-models/releases/download"
-    return f"{prefix}/{supported_models[model]}/{model}.onnx"
+from cflearn_deploy.toolkit import bytes_to_np
+from cflearn_deploy.api_utils import post_img_arr
 
 
 @st.cache
-def get_alpha(api: U2NetAPI, src: np.ndarray) -> np.ndarray:
-    with st.spinner("Generating alpha mask..."):
-        return api._get_alpha(src)
+def get_rgba_response(src: np.ndarray, smooth: int, tight: float) -> Response:
+    with st.spinner("Generating RGBA image..."):
+        return post_img_arr(src, port="8000", uri="/ai/sod", smooth=smooth, tight=tight)
 
 
 def app() -> None:
     st.title("Salient Object Detection")
 
-    models = sorted(supported_models)
-    model = st.sidebar.radio("Select a model", models)
     use_threshold = st.sidebar.radio("Use threshold", [True, False], index=1)
     thresh = None
     if use_threshold:
@@ -41,22 +26,21 @@ def app() -> None:
     smooth = st.sidebar.slider("Smooth", min_value=0, max_value=20, value=4)
     tight = st.sidebar.slider("Tight", min_value=0.0, max_value=1.0, value=0.9)
 
-    onnx_path = os.path.join(MODEL_FOLDER, f"{model}.onnx")
-    if not os.path.isfile(onnx_path):
-        url = get_url(model)
-        download_with_progress(url, onnx_path)
-
-    with st.spinner(f"Loading onnx model ({model})..."):
-        api = U2NetAPI(onnx_path)
-    st.markdown(f"**onnx model `{model}` loaded!**")
     uploaded_file = st.file_uploader("Please upload your file")
     if uploaded_file is not None:
         image = Image.open(uploaded_file).convert("RGB")
         st.image(image, caption="Uploaded Image")
-        arr = np.array(image).astype(np.float32) / 255.0
-        alpha = get_alpha(api, arr)
-        if thresh is not None:
-            alpha = (alpha > thresh).astype(np.float32)
-        alpha, rgba = cutout(arr, alpha, smooth, tight)
-        st.image(to_uint8(alpha), caption="Mask")
-        st.image(rgba, caption="RGBA")
+        img_arr = np.array(image)
+        normalized_img = img_arr.astype(np.float32) / 255.0
+        resized_img = resize(img_arr, (320, 320), mode="constant")
+        resized_img = resized_img.astype(np.float32)
+        rgba_response = get_rgba_response(resized_img, smooth=smooth, tight=tight)
+        if not rgba_response.ok:
+            st.markdown(f"**Failed to get alpha mask! ({rgba_response.reason})**")
+        else:
+            alpha = bytes_to_np(rgba_response.content, mode="RGBA")[..., -1]
+            if thresh is not None:
+                alpha = (alpha > thresh).astype(np.float32)
+            alpha, rgba = cutout(normalized_img, alpha, smooth, tight)
+            st.image(to_uint8(alpha), caption="Mask")
+            st.image(rgba, caption="RGBA")
