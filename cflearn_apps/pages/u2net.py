@@ -23,7 +23,7 @@ def app() -> None:
     thresh = None
     if use_threshold:
         thresh = st.sidebar.slider("Threshold", min_value=0.0, max_value=1.0, value=0.5)
-    smooth = st.sidebar.slider("Smooth", min_value=0, max_value=20, value=4)
+    smooth = st.sidebar.slider("Smooth", min_value=0, max_value=20, value=0)
     tight = st.sidebar.slider("Tight", min_value=0.0, max_value=1.0, value=0.9)
 
     uploaded_file = st.file_uploader("Please upload your file")
