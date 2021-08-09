@@ -28,8 +28,9 @@ def app() -> None:
 
     uploaded_file = st.file_uploader("Please upload your file")
     if uploaded_file is not None:
+        col1, col2 = st.columns(2)
         image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption="Uploaded Image")
+        col1.image(image, caption="Uploaded Image")
         img_arr = np.array(image)
         normalized_img = img_arr.astype(np.float32) / 255.0
         resized_img = resize(img_arr, (320, 320), mode="constant")
@@ -42,5 +43,5 @@ def app() -> None:
             if thresh is not None:
                 alpha = (alpha > thresh).astype(np.float32)
             alpha, rgba = cutout(normalized_img, alpha, smooth, tight)
-            st.image(to_uint8(alpha), caption="Mask")
+            col2.image(to_uint8(alpha), caption="Mask")
             st.image(rgba, caption="RGBA")
