@@ -13,7 +13,7 @@ from cflearn_deploy.api_utils import post_img_arr
 @st.cache
 def get_rgba_response(src: np.ndarray, smooth: int, tight: float) -> Response:
     with st.spinner("Generating RGBA image..."):
-        return post_img_arr(src, port="8000", uri="/ai/sod", smooth=smooth, tight=tight)
+        return post_img_arr(src, uri="/cv/sod", smooth=smooth, tight=tight)
 
 
 def app() -> None:
