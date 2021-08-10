@@ -9,11 +9,6 @@ setup(
     name="carefree-learn-apps",
     version=VERSION,
     packages=find_packages(exclude=("tests",)),
-    install_requires=[
-        "stqdm",
-        "streamlit",
-        "carefree-learn-deploy",
-    ],
     author="carefree0910",
     author_email="syameimaru.saki@gmail.com",
     url="https://github.com/carefree0910/carefree-learn",
