@@ -30,6 +30,7 @@ def app() -> None:
     if uploaded_file is not None:
         col1, col2 = st.columns(2)
         image = Image.open(uploaded_file).convert("RGB")
+        image.thumbnail((320, 320), Image.ANTIALIAS)
         col1.image(image, caption="Uploaded Image")
         img_arr = np.array(image)
         normalized_img = img_arr.astype(np.float32) / 255.0
