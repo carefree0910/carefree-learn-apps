@@ -1,2 +1,2 @@
-from .pages import u2net
+from .pages import sod
 from .multipage import MultiPage

@@ -16,5 +16,5 @@ st.sidebar.title(
     "(https://github.com/carefree0910/carefree-learn/tree/v0.2.x)"
 )
 
-app.add_page("Salient Object Detection", cflearn_apps.u2net.app)
+app.add_page("Salient Object Detection", cflearn_apps.sod.app)
 app.run()
