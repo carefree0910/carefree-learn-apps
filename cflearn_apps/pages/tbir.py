@@ -40,7 +40,7 @@ def app() -> None:
     num_probe = st.sidebar.slider("num probe", min_value=8, max_value=24, value=16)
     model = st.sidebar.text_input("Model Name", "tbir")
 
-    text = st.text_input("Please input your text!", "A poster of noodle")
+    text = st.text_input("Please input your text!", "I want cartoon style")
     if text:
         columns = st.columns(3)
         indices_response = get_indices_response(
