@@ -1,6 +1,10 @@
 import os
 import json
+import random
+import hashlib
 import cflearn_deploy
+import http.client
+import urllib.parse
 
 import streamlit as st
 
@@ -13,6 +17,7 @@ from cflearn_deploy.api_utils import post_json
 
 
 root = os.path.dirname(__file__)
+info_folder = os.path.join(root, "info")
 sqlite_file = os.path.join(
     root,
     os.pardir,
@@ -31,6 +36,22 @@ def get_indices_response(text: str, **kwargs: Any) -> Response:
         return post_json([text], uri="/cv/tbir", **kwargs)
 
 
+def zh2en(text: str, app_id: str, secret_key: str) -> str:
+    salt = random.randint(32768, 65536)
+    sign = f"{app_id}{text}{salt}{secret_key}"
+    sign = hashlib.md5(sign.encode()).hexdigest()
+    client = http.client.HTTPConnection('api.fanyi.baidu.com')
+    client.request(
+        "GET",
+        f"/api/trans/vip/translate?appid={app_id}&q={urllib.parse.quote(text)}"
+        f"&from=zh&to=en&salt={salt}&sign={sign}",
+    )
+    response = client.getresponse()
+    result_all = response.read().decode("utf-8")
+    result = json.loads(result_all)
+    return result["trans_result"][0]["dst"]
+
+
 def app() -> None:
     st.title("Text Based Image Retrieval")
     engine = cflearn_deploy.get_engine(file=sqlite_file, echo=False)
@@ -40,8 +61,13 @@ def app() -> None:
     num_probe = st.sidebar.slider("num probe", min_value=8, max_value=24, value=16)
     model = st.sidebar.text_input("Model Name", "tbir")
 
-    text = st.text_input("Please input your text!", "I want cartoon style")
+    with open(os.path.join(info_folder, "baidu_fanyi.json"), "r") as f:
+        fanyi = json.load(f)
+        app_id, secret_key = fanyi["app_id"], fanyi["secret_key"]
+
+    text = st.text_input("Please input your text!", "来点卡通风格的")
     if text:
+        text = zh2en(text, app_id, secret_key)
         columns = st.columns(3)
         indices_response = get_indices_response(
             text,
