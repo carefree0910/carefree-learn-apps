@@ -41,7 +41,7 @@ def app() -> None:
     metric_type = st.sidebar.radio("metric_type", ["L2", "IP"], index=0)
     top_k = st.sidebar.slider("Top K", min_value=3, max_value=48, value=9)
     num_probe = st.sidebar.slider("num probe", min_value=8, max_value=24, value=16)
-    model = st.sidebar.text_input("Model Name", "dino_vit")
+    model = st.sidebar.text_input("Model Name", "cbir")
 
     uploaded_file = st.file_uploader("Please upload your file")
     if uploaded_file is not None:
