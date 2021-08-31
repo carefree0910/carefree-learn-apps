@@ -35,7 +35,7 @@ def app() -> None:
     st.title("Text Based Image Retrieval")
     engine = cflearn_deploy.get_engine(file=sqlite_file, echo=False)
 
-    metric_type = st.sidebar.radio("metric_type", ["L2", "IP"], index=0)
+    metric_type = st.sidebar.radio("metric_type", ["L2", "IP"], index=1)
     top_k = st.sidebar.slider("Top K", min_value=3, max_value=48, value=9)
     num_probe = st.sidebar.slider("num probe", min_value=8, max_value=24, value=16)
     model = st.sidebar.text_input("Model Name", "tbir")
