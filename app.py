@@ -18,4 +18,5 @@ st.sidebar.title(
 
 app.add_page("Salient Object Detection", cflearn_apps.sod.app)
 app.add_page("Content Based Image Retrieval", cflearn_apps.cbir.app)
+app.add_page("Text Based Image Retrieval", cflearn_apps.tbir.app)
 app.run()
