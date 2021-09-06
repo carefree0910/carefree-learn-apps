@@ -25,11 +25,11 @@ def app() -> None:
     content = style = None
     if content_file is not None:
         content = Image.open(content_file).convert("RGB")
-        content.thumbnail((256, 256), Image.ANTIALIAS)
+        content.thumbnail((512, 512), Image.ANTIALIAS)
         col1.image(content, caption="Content Image")
     if style_file is not None:
         style = Image.open(style_file).convert("RGB")
-        style.thumbnail((256, 256), Image.ANTIALIAS)
+        style.thumbnail((512, 512), Image.ANTIALIAS)
         col2.image(style, caption="Style Image")
     if content is not None and style is not None:
         content_arr, style_arr = map(np.array, [content, style])
