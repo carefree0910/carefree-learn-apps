@@ -20,7 +20,6 @@ def app() -> None:
 
     content_file = st.file_uploader("Please upload the content file")
     style_file = st.file_uploader("Please upload the style file")
-    contrast_q = st.sidebar.slider("contrast_q", min_value=0.0, max_value=0.2, value=0.01)
     col1, col2, col3 = st.columns(3)
     content = style = None
     if content_file is not None:
@@ -33,7 +32,7 @@ def app() -> None:
         col2.image(style, caption="Style Image")
     if content is not None and style is not None:
         content_arr, style_arr = map(np.array, [content, style])
-        response = get_response(content_arr, style_arr, model_name=model, q=contrast_q)
+        response = get_response(content_arr, style_arr, model_name=model)
         if not response.ok:
             st.markdown(f"**Failed to get stylized image! ({response.reason})**")
         else:
