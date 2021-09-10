@@ -15,7 +15,6 @@ def get_response(content: np.ndarray, style: np.ndarray, **kwargs: Any) -> Respo
 
 
 def app() -> None:
-    st.title("Arbitrary Style Transfer with AdaIN")
     model = st.sidebar.text_input("Model Name", "adain")
 
     content_file = st.file_uploader("Please upload the content file")

@@ -18,8 +18,6 @@ def get_rgba_response(src: np.ndarray, **kwargs: Any) -> Response:
 
 
 def app() -> None:
-    st.title("Salient Object Detection")
-
     use_threshold = st.sidebar.radio("Use threshold", [True, False], index=1)
     thresh = None
     if use_threshold:

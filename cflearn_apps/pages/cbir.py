@@ -35,7 +35,6 @@ def get_indices_response(src: np.ndarray, **kwargs: Any) -> Response:
 
 
 def app() -> None:
-    st.title("Content Based Image Retrieval")
     engine = cflearn_deploy.get_engine(file=sqlite_file, echo=False)
 
     metric_type = st.sidebar.radio("metric_type", ["L2", "IP"], index=0)

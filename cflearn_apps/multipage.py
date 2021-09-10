@@ -18,4 +18,5 @@ class MultiPage:
             format_func=lambda p: p["title"],
         )
         st.sidebar.markdown("---")
+        st.title(page["title"])
         page["func"]()
