@@ -70,7 +70,7 @@ def app() -> None:
         columns = st.columns(3)
         indices_response = get_indices_response(
             text,
-            model_name=model,
+            onnx_name=model,
             top_k=top_k,
             nprobe=num_probe,
             metric_type=metric_type,

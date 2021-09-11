@@ -31,7 +31,7 @@ def app() -> None:
         col2.image(style, caption="Style Image")
     if content is not None and style is not None:
         content_arr, style_arr = map(np.array, [content, style])
-        response = get_response(content_arr, style_arr, model_name=model)
+        response = get_response(content_arr, style_arr, onnx_name=model)
         if not response.ok:
             st.markdown(f"**Failed to get stylized image! ({response.reason})**")
         else:

@@ -54,7 +54,7 @@ def app() -> None:
             resized_img = resized_img.astype(np.float32)
         indices_response = get_indices_response(
             resized_img,
-            model_name=model,
+            onnx_name=model,
             top_k=top_k,
             nprobe=num_probe,
             metric_type=metric_type,

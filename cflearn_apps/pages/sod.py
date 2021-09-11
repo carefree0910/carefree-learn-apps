@@ -38,7 +38,7 @@ def app() -> None:
         resized_img = resized_img.astype(np.float32)
         rgba_response = get_rgba_response(
             resized_img,
-            model_name=model,
+            onnx_name=model,
             smooth=smooth,
             tight=tight,
         )

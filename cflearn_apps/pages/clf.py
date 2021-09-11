@@ -29,7 +29,7 @@ def app() -> None:
         img_arr = np.array(image)
         resized_img = resize(img_arr, (224, 224), mode="constant")
         resized_img = resized_img.astype(np.float32)
-        prob_response = get_prob_response(resized_img, model_name=model)
+        prob_response = get_prob_response(resized_img, onnx_name=model)
         if not prob_response.ok:
             st.markdown(f"**Failed to get probabilities! ({prob_response.reason})**")
         else:
