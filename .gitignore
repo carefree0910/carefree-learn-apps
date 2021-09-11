@@ -11,4 +11,4 @@ dist/*
 **/mlruns/*
 *.zip
 cflearn_apps/models/*.onnx
-cflearn_apps/pages/info/*
+src/*
