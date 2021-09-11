@@ -2,38 +2,15 @@ import os
 import json
 import random
 import hashlib
-import cflearn_deploy
 import http.client
 import urllib.parse
 
 import streamlit as st
 
-from typing import Any
-from sqlmodel import select
-from sqlmodel import Session
-from requests import Response
-from cflearn_deploy.toolkit import bytes_to_np
 from cflearn_deploy.api_utils import post_json
 
-
-root = os.path.dirname(__file__)
-info_folder = os.path.join(root, "info")
-sqlite_file = os.path.join(
-    root,
-    os.pardir,
-    os.pardir,
-    os.pardir,
-    "carefree-learn-deploy",
-    "apis",
-    "data",
-    "sqlite.db",
-)
-
-
-@st.cache
-def get_indices_response(text: str, **kwargs: Any) -> Response:
-    with st.spinner("Fetching retrieval indices..."):
-        return post_json([text], uri="/cv/tbir", **kwargs)
+from .utils import image_retrieval
+from ..constants import API_INFO_FOLDER
 
 
 def zh2en(text: str, app_id: str, secret_key: str) -> str:
@@ -53,37 +30,25 @@ def zh2en(text: str, app_id: str, secret_key: str) -> str:
 
 
 def app() -> None:
-    engine = cflearn_deploy.get_engine(file=sqlite_file, echo=False)
-
-    metric_type = st.sidebar.radio("metric_type", ["L2", "IP"], index=0)
+    task = st.sidebar.text_input("Task", "poster")
+    model = st.sidebar.text_input("Model Name", "tbir")
     top_k = st.sidebar.slider("Top K", min_value=3, max_value=48, value=9)
     num_probe = st.sidebar.slider("num probe", min_value=8, max_value=24, value=16)
-    model = st.sidebar.text_input("Model Name", "tbir")
 
-    with open(os.path.join(info_folder, "baidu_fanyi.json"), "r") as f:
+    with open(os.path.join(API_INFO_FOLDER, "baidu_fanyi.json"), "r") as f:
         fanyi = json.load(f)
         app_id, secret_key = fanyi["app_id"], fanyi["secret_key"]
 
     text = st.text_input("Please input your text!", "来点卡通风格的")
     if text:
         text = zh2en(text, app_id, secret_key)
-        columns = st.columns(3)
-        indices_response = get_indices_response(
-            text,
-            onnx_name=model,
-            top_k=top_k,
-            nprobe=num_probe,
-            metric_type=metric_type,
+        image_retrieval(
+            "tbir",
+            post_json,
+            [text],
+            task,
+            model,
+            top_k,
+            num_probe,
+            st.columns(3),
         )
-        if not indices_response.ok:
-            reason = indices_response.reason
-            st.markdown(f"**Failed to get retrieval indices! ({reason})**")
-        else:
-            rs = json.loads(indices_response.content)
-            indices, distances = rs["indices"], rs["distances"]
-            item_base = cflearn_deploy.ImageItem
-            with Session(engine) as session:
-                for i, (idx, distance) in enumerate(zip(indices, distances)):
-                    rs = session.exec(select(item_base.bytes).where(item_base.id == idx))
-                    np_img = bytes_to_np(rs.one(), mode="RGB")
-                    columns[i % 3].image(np_img, caption=f"{distance:8.6f}")
