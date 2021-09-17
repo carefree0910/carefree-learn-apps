@@ -2,6 +2,7 @@ import json
 
 import numpy as np
 import streamlit as st
+import matplotlib.pyplot as plt
 
 from PIL import Image
 from typing import Any
@@ -32,6 +33,28 @@ def app() -> None:
         if not prob_response.ok:
             st.markdown(f"**Failed to get probabilities! ({prob_response.reason})**")
         else:
+            kwargs = dict(figsize=(12, 7), subplot_kw=dict(aspect="equal"), dpi=80)
+            fig, ax = plt.subplots(**kwargs)
             probabilities = json.loads(prob_response.content)["probabilities"]
             top_indices = np.argsort(probabilities).tolist()[::-1][:top_k]
-            col2.json({str(i): probabilities[i] for i in top_indices})
+            top_probabilities = [probabilities[i] for i in top_indices]
+            top_probabilities.append(1.0 - sum(top_probabilities))
+            wedges, texts, auto_texts = ax.pie(
+                top_probabilities,
+                autopct=lambda value: f"{value:.1f}%",
+                textprops=dict(color="w"),
+                colors=plt.cm.Dark2.colors,
+                startangle=140,
+                normalize=False,
+            )
+            categories = [str(i) for i in top_indices] + ["else"]
+            ax.legend(
+                wedges,
+                categories,
+                title="Class",
+                loc="center left",
+                bbox_to_anchor=(1, 0, 0.5, 1),
+            )
+            plt.setp(auto_texts, size=10, weight=700)
+            ax.set_title("Pie Chart")
+            col2.pyplot(fig)
