@@ -16,11 +16,11 @@ st.sidebar.title(
     "(https://github.com/carefree0910/carefree-learn/tree/v0.2.x)"
 )
 
-app.add_page("Style GAN", cflearn_apps.style_gan.app)
 app.add_page("Color Extraction", cflearn_apps.color_extraction.app)
 app.add_page("Salient Object Detection", cflearn_apps.sod.app)
 app.add_page("Content Based Image Retrieval", cflearn_apps.cbir.app)
 app.add_page("Text Based Image Retrieval", cflearn_apps.tbir.app)
 app.add_page("Arbitrary Style Transfer with AdaIN", cflearn_apps.adain.app)
 app.add_page("Image Classification", cflearn_apps.clf.app)
+app.add_page("Style GAN", cflearn_apps.style_gan.app)
 app.run()
