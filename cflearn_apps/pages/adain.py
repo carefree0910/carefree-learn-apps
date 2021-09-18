@@ -4,6 +4,7 @@ import streamlit as st
 from PIL import Image
 from typing import Any
 from requests import Response
+from cflearn_deploy.toolkit import resize_to
 from cflearn_deploy.toolkit import bytes_to_np
 from cflearn_deploy.api_utils import post_img_arr
 
@@ -20,20 +21,21 @@ def app() -> None:
     content_file = st.file_uploader("Please upload the content file")
     style_file = st.file_uploader("Please upload the style file")
     col1, col2, col3 = st.columns(3)
-    content = style = None
+    content = style = original_shape = None
     if content_file is not None:
         content = Image.open(content_file).convert("RGB")
-        content.thumbnail((512, 512), Image.ANTIALIAS)
+        original_shape = content.size
         col1.image(content, caption="Content Image")
+        content.thumbnail((512, 512), Image.ANTIALIAS)
     if style_file is not None:
         style = Image.open(style_file).convert("RGB")
-        style.thumbnail((512, 512), Image.ANTIALIAS)
         col2.image(style, caption="Style Image")
-    if content is not None and style is not None:
+        style.thumbnail((512, 512), Image.ANTIALIAS)
+    if content is not None and style is not None and original_shape is not None:
         content_arr, style_arr = map(np.array, [content, style])
         response = get_response(content_arr, style_arr, onnx_name=model)
         if not response.ok:
             st.markdown(f"**Failed to get stylized image! ({response.reason})**")
         else:
             stylized = bytes_to_np(response.content, mode="RGB")
-            col3.image(stylized, caption="Stylized")
+            col3.image(resize_to(stylized, original_shape), caption="Stylized")
