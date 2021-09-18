@@ -7,6 +7,7 @@ from requests import Response
 from skimage.transform import resize
 from cflearn_deploy.toolkit import cutout
 from cflearn_deploy.toolkit import to_uint8
+from cflearn_deploy.toolkit import resize_to
 from cflearn_deploy.toolkit import bytes_to_np
 from cflearn_deploy.api_utils import post_img_arr
 
@@ -48,8 +49,7 @@ def app() -> None:
             alpha = bytes_to_np(rgba_response.content, mode="RGBA")[..., -1]
             if thresh is not None:
                 alpha = (alpha > thresh).astype(np.float32)
-            alpha_img = Image.fromarray(to_uint8(alpha))
-            alpha = np.array(alpha_img.resize(original_shape, Image.LANCZOS))
+            alpha = np.array(resize_to(alpha, original_shape))
             alpha = alpha.astype(np.float32) / 255.0
             alpha, rgba = cutout(original_normalized_img, alpha, smooth, tight)
             col2.image(to_uint8(alpha), caption="Mask")
