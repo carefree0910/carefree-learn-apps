@@ -4,5 +4,6 @@ from .pages import cbir
 from .pages import tbir
 from .pages import adain
 from .pages import generation
+from .pages import stylization
 from .pages import color_extraction
 from .multipage import MultiPage
