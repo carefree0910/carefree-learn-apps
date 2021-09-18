@@ -6,9 +6,9 @@ from cflearn_deploy.toolkit import bytes_to_np
 from cflearn_deploy.api_utils import post_img_arr
 
 
-def get_rgb_response(**kwargs: Any) -> Response:
+def get_rgb_response(model: str, **kwargs: Any) -> Response:
     with st.spinner("Generating image..."):
-        return post_img_arr(uri="/cv/style_gan", **kwargs)
+        return post_img_arr(uri=f"/cv/{model}", **kwargs)
 
 
 def app() -> None:
@@ -32,7 +32,7 @@ def app() -> None:
         "style_gan.ffhq": "person",
         "style_gan.metfaces": "art piece",
     }
-    rgb_response = get_rgb_response(onnx_name=model_name)
+    rgb_response = get_rgb_response(model, onnx_name=model_name)
     if not rgb_response.ok:
         st.markdown(f"**Failed to generate image! ({rgb_response.reason})**")
     else:
