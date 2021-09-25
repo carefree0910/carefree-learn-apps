@@ -18,7 +18,7 @@ def get_prob_response(src: np.ndarray, **kwargs: Any) -> Response:
 
 
 def app() -> None:
-    top_k = st.sidebar.slider("Smooth", min_value=1, max_value=20, value=5)
+    top_k = st.sidebar.slider("Top K", min_value=1, max_value=20, value=5)
     model = st.sidebar.text_input("Model Name", "cct")
 
     uploaded_file = st.file_uploader("Please upload your file")
