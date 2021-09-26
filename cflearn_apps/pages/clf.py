@@ -65,8 +65,9 @@ def app() -> None:
                     with open(mapping_path, "r") as f:
                         mapping = json.load(f)
                 top_indices = np.argsort(v).tolist()[::-1][:top_k]
-                top_probabilities = [v[i] for i in top_indices]
-                top_probabilities.append(1.0 - sum(top_probabilities) - 1.0e-8)
+                eps = 1.0e-8
+                top_probabilities = [max(eps, v[i]) for i in top_indices]
+                top_probabilities.append(max(eps, 1.0 - sum(top_probabilities) - eps))
                 # draw
                 kwargs = dict(figsize=(12, 7), subplot_kw=dict(aspect="equal"), dpi=80)
                 fig, ax = plt.subplots(**kwargs)
