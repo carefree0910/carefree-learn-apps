@@ -31,6 +31,7 @@ def image_retrieval(
     post_fn: Callable,
     query: Any,
     task: str,
+    src_folder: str,
     model: str,
     top_k: int,
     num_probe: int,
@@ -51,7 +52,7 @@ def image_retrieval(
     else:
         rs = json.loads(indices_response.content)
         files, distances = rs["files"], rs["distances"]
-        task_img_folder = os.path.join(IMAGES_FOLDER, task)
+        img_folder = os.path.join(IMAGES_FOLDER, src_folder)
         for i, (file, distance) in enumerate(zip(files, distances)):
-            img = Image.open(os.path.join(task_img_folder, file)).convert("RGB")
+            img = Image.open(os.path.join(img_folder, file)).convert("RGB")
             columns[i % 3].image(img, caption=f"{distance:8.6f}")

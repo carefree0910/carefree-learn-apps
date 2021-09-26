@@ -47,6 +47,7 @@ def app() -> None:
             post_json,
             [text],
             task,
+            task,
             model,
             top_k,
             num_probe,

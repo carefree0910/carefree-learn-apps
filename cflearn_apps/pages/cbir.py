@@ -9,10 +9,21 @@ from .utils import image_retrieval
 
 
 def app() -> None:
-    task = st.sidebar.text_input("Task", "poster")
-    model = st.sidebar.text_input("Model Name", "cbir")
     top_k = st.sidebar.slider("Top K", min_value=3, max_value=48, value=9)
     num_probe = st.sidebar.slider("num probe", min_value=8, max_value=24, value=16)
+    model = st.sidebar.text_input("Model Name", "cbir")
+    task = st.sidebar.radio(
+        "Task",
+        [
+            "poster",
+        ],
+        index=0,
+    )
+    model_name = f"{model}.{task}"
+    if task == "poster":
+        src_folder = "poster"
+    else:
+        raise ValueError
 
     uploaded_file = st.file_uploader("Please upload your file")
     if uploaded_file is not None:
@@ -29,7 +40,8 @@ def app() -> None:
                 post_img_arr,
                 resized_img,
                 task,
-                model,
+                src_folder,
+                model_name,
                 top_k,
                 num_probe,
                 columns,
