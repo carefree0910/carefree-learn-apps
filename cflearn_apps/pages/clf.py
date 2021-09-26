@@ -15,6 +15,8 @@ from cflearn_deploy.constants import PREDICTIONS_KEY
 
 from ..constants import META_FOLDER
 
+plt.rcParams["font.sans-serif"] = ["SimHei"]
+
 
 @st.cache
 def get_prob_response(src: np.ndarray, **kwargs: Any) -> Response:
@@ -62,7 +64,7 @@ def app() -> None:
                 if not os.path.isfile(mapping_path):
                     mapping = None
                 else:
-                    with open(mapping_path, "r") as f:
+                    with open(mapping_path, "r", encoding="utf-8") as f:
                         mapping = json.load(f)
                 top_indices = np.argsort(v).tolist()[::-1][:top_k]
                 eps = 1.0e-8
