@@ -53,6 +53,14 @@ def image_retrieval(
         rs = json.loads(indices_response.content)
         files, distances = rs["files"], rs["distances"]
         img_folder = os.path.join(IMAGES_FOLDER, src_folder)
-        for i, (file, distance) in enumerate(zip(files, distances)):
-            img = Image.open(os.path.join(img_folder, file)).convert("RGB")
-            columns[i % 3].image(img, caption=f"{distance:8.6f}")
+        for k, k_files in files.items():
+            columns[0].markdown("---")
+            columns[1].markdown(
+                f"<h3 style='text-align: center'> {k} </h3>",
+                unsafe_allow_html=True,
+            )
+            columns[2].markdown("---")
+            k_distances = distances[k]
+            for i, (file, distance) in enumerate(zip(k_files, k_distances)):
+                img = Image.open(os.path.join(img_folder, file)).convert("RGB")
+                columns[i % 3].image(img, caption=f"{distance:8.6f}")
