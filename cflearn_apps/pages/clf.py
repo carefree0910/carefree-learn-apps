@@ -15,7 +15,7 @@ from cflearn_deploy.constants import PREDICTIONS_KEY
 
 from ..constants import META_FOLDER
 
-plt.rcParams["font.sans-serif"] = ["SimHei"]
+plt.rcParams["font.sans-serif"] = ["Noto Sans SC"]
 
 
 @st.cache
