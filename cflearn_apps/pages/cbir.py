@@ -28,7 +28,7 @@ def app() -> None:
     if task == "poster":
         img_type = "RGB"
         src_folder = "poster"
-        gray = False
+        gray = model.endswith("_shape")
         no_transform = False
         caption_callback = None
     elif task == "fonts":
