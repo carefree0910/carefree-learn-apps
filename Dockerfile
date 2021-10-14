@@ -36,7 +36,8 @@ RUN mkdir -p /usr/share/fonts/opentype/google-fonts && \
     apt-get -y install fontconfig && \
     find $PWD/NotoSansSC/ -name "*.otf" -exec install -m644 {} /usr/share/fonts/opentype/google-fonts/ \; || return 1 && \
     rm -rf /var/cache/* && \
-    fc-cache -f
+    fc-cache -f && \
+    rm Noto_Sans_SC.zip && rm -rf cache NotoSansSC
 
 EXPOSE 8501
 ENTRYPOINT ["streamlit", "run"]
