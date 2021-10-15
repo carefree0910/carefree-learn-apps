@@ -24,10 +24,7 @@ RUN rm /etc/apt/sources.list && \
     python -m venv .venv &&  \
     .venv/bin/pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     .venv/bin/pip install -U pip setuptools && \
-    .venv/bin/pip install . --default-timeout=10000 && \
-    .venv/bin/pip install streamlit --default-timeout=10000 && \
-    git clone https://gitlab.nolibox.com/nolibox/ailab/carefree-learn-deploy.git && \
-    cd carefree-learn-deploy; .venv/bin/pip install . --default-timeout=10000 && \
+    .venv/bin/pip install -r requirements.txt --default-timeout=10000 && \
     find /usr/home/.venv \( -type d -a -name test -o -name tests \) -o \( -type f -a -name '*.pyc' -o -name '*.pyo' \) -exec rm -rf '{}' \+
 
 FROM python:3.6-slim
