@@ -2,8 +2,8 @@ FROM python:3.6-slim-buster AS builder
 WORKDIR /usr/home
 COPY . .
 
-env http_proxy "http://proxy.internal.nolibox.com:8008"
-env https_proxy "http://proxy.internal.nolibox.com:8008"
+ENV http_proxy "http://proxy.internal.nolibox.com:8008"
+ENV https_proxy "http://proxy.internal.nolibox.com:8008"
 
 RUN rm /etc/apt/sources.list && \
     echo "deb http://mirrors.163.com/debian/ buster main non-free contrib" >> /etc/apt/sources.list  && \
