@@ -7,8 +7,6 @@ import urllib.parse
 
 import streamlit as st
 
-from cflearn_deploy.api_utils import post_json
-
 from .utils import image_retrieval
 from ..constants import API_INFO_FOLDER
 
@@ -31,7 +29,6 @@ def zh2en(text: str, app_id: str, secret_key: str) -> str:
 
 def app() -> None:
     task = st.sidebar.text_input("Task", "poster")
-    model = st.sidebar.text_input("Model Name", "tbir")
     top_k = st.sidebar.slider("Top K", min_value=3, max_value=48, value=9)
     num_probe = st.sidebar.slider("num probe", min_value=8, max_value=24, value=16)
 
@@ -43,12 +40,9 @@ def app() -> None:
     if text:
         text = zh2en(text, app_id, secret_key)
         image_retrieval(
+            text,
+            task,
             "tbir",
-            post_json,
-            [text],
-            task,
-            task,
-            model,
             top_k,
             num_probe,
             st.columns(3),

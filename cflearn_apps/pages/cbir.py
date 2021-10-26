@@ -3,13 +3,8 @@ import streamlit as st
 
 from PIL import Image
 from skimage.transform import resize
-from cflearn_deploy.api_utils import post_img_arr
 
 from .utils import image_retrieval
-
-
-def fonts_caption_callback(file: str) -> str:
-    return file.split("/")[-2]
 
 
 def app() -> None:
@@ -20,23 +15,13 @@ def app() -> None:
         "Task",
         [
             "poster",
-            "fonts",
         ],
         index=0,
     )
-    model_name = f"{model}.{task}"
     if task == "poster":
         img_type = "RGB"
         src_folder = "poster"
         gray = model.endswith("_shape")
-        no_transform = False
-        caption_callback = None
-    elif task == "fonts":
-        img_type = "L"
-        src_folder = "fonts/english"
-        gray = True
-        no_transform = True
-        caption_callback = fonts_caption_callback
     else:
         raise ValueError
 
@@ -51,16 +36,11 @@ def app() -> None:
             resized_img = resize(img_arr, (224, 224), mode="constant")
             resized_img = resized_img.astype(np.float32)
             image_retrieval(
-                "cbir",
-                post_img_arr,
-                resized_img,
-                task,
+                resized_img[None, ...],
                 src_folder,
-                model_name,
+                "cbir",
                 top_k,
                 num_probe,
                 columns,
                 gray,
-                no_transform,
-                caption_callback,
             )

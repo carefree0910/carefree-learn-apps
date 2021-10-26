@@ -1,4 +1,3 @@
-import json
 import math
 
 import numpy as np
@@ -7,14 +6,16 @@ import streamlit as st
 from PIL import Image
 from PIL import ImageDraw
 from typing import Any
-from requests import Response
-from cflearn_deploy.api_utils import post_img_arr
+from typing import List
+from cflearn_deploy.client import Client
 
 
 @st.cache
-def get_colors_response(src: np.ndarray, **kwargs: Any) -> Response:
+def get_colors(src: np.ndarray, num_colors: int, **kwargs: Any) -> List[List[int]]:
     with st.spinner("Extracting colors..."):
-        return post_img_arr(src, uri="/cv/color_extraction", **kwargs)
+        inputs = {"input": src[None, ...], "num_colors": num_colors}
+        results = Client().infer("color_extraction", inputs, **kwargs)
+        return results.as_numpy("predictions")[0].tolist()
 
 
 def app() -> None:
@@ -28,22 +29,18 @@ def app() -> None:
         col1, col2 = st.columns(2)
         col1.image(image, caption="Uploaded Image")
         image.thumbnail((256, 256), Image.ANTIALIAS)
-        colors_response = get_colors_response(np.array(image), num_colors=num_colors)
-        if not colors_response.ok:
-            st.markdown(f"**Failed to extract colors! ({colors_response.reason})**")
-        else:
-            canvas_w = size * min(num_colors, per_row)
-            canvas_h = size * math.ceil(num_colors / per_row)
-            canvas = Image.new("RGB", (canvas_w, canvas_h), (255, 255, 255))
-            draw = ImageDraw.Draw(canvas)
-            colors = json.loads(colors_response.content)["colors"]
-            for i, color in enumerate(colors):
-                lx = (i % per_row) * size
-                ly = (i // per_row) * size
-                draw.rectangle(
-                    (lx, ly, lx + size, ly + size),
-                    fill=tuple(color),
-                    outline=(220, 220, 220),
-                    width=2,
-                )
-            col2.image(canvas)
+        colors = get_colors(np.array(image), num_colors)
+        canvas_w = size * min(num_colors, per_row)
+        canvas_h = size * math.ceil(num_colors / per_row)
+        canvas = Image.new("RGB", (canvas_w, canvas_h), (255, 255, 255))
+        draw = ImageDraw.Draw(canvas)
+        for i, color in enumerate(colors):
+            lx = (i % per_row) * size
+            ly = (i // per_row) * size
+            draw.rectangle(
+                (lx, ly, lx + size, ly + size),
+                fill=tuple(color),
+                outline=(220, 220, 220),
+                width=2,
+            )
+        col2.image(canvas)

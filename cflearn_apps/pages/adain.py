@@ -3,21 +3,19 @@ import streamlit as st
 
 from PIL import Image
 from typing import Any
-from requests import Response
 from cflearn_deploy.toolkit import resize_to
-from cflearn_deploy.toolkit import bytes_to_np
-from cflearn_deploy.api_utils import post_img_arr
+from cflearn_deploy.client import Client
 
 
 @st.cache
-def get_response(content: np.ndarray, style: np.ndarray, **kwargs: Any) -> Response:
+def get_stylized(content: np.ndarray, style: np.ndarray, **kwargs: Any) -> np.ndarray:
     with st.spinner("Generating stylized image..."):
-        return post_img_arr(content, style, uri="/cv/adain", **kwargs)
+        inputs = {"input": content[None, ...], "style": style[None, ...]}
+        results = Client().infer("adain", inputs, **kwargs)
+        return results.as_numpy("predictions")[0]
 
 
 def app() -> None:
-    model = st.sidebar.text_input("Model Name", "adain")
-
     content_file = st.file_uploader("Please upload the content file")
     style_file = st.file_uploader("Please upload the style file")
     col1, col2, col3 = st.columns(3)
@@ -33,9 +31,6 @@ def app() -> None:
         style.thumbnail((512, 512), Image.ANTIALIAS)
     if content is not None and style is not None and original_shape is not None:
         content_arr, style_arr = map(np.array, [content, style])
-        response = get_response(content_arr, style_arr, onnx_name=model)
-        if not response.ok:
-            st.markdown(f"**Failed to get stylized image! ({response.reason})**")
-        else:
-            stylized = bytes_to_np(response.content, mode="RGB")
-            col3.image(resize_to(stylized, original_shape), caption="Stylized")
+        stylized = get_stylized(content_arr, style_arr)
+        resized = resize_to(stylized.astype(np.float32) / 255.0, original_shape)
+        col3.image(resized, caption="Stylized")
