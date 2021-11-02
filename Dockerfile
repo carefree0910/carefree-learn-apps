@@ -2,10 +2,17 @@ FROM python:3.6-slim-buster AS builder
 WORKDIR /usr/home
 COPY . .
 
-ENV http_proxy "http://proxy.internal.nolibox.com:8008"
-ENV https_proxy "http://proxy.internal.nolibox.com:8008"
-
-RUN apt-get update && \
+RUN rm /etc/apt/sources.list && \
+    echo "deb http://mirrors.163.com/debian/ buster main non-free contrib" >> /etc/apt/sources.list  && \
+    echo "deb http://mirrors.163.com/debian/ buster-updates main non-free contrib" >> /etc/apt/sources.list  && \
+    echo "deb http://mirrors.163.com/debian/ buster-backports main non-free contrib" >> /etc/apt/sources.list  && \
+    echo "deb-src http://mirrors.163.com/debian/ buster main non-free contrib" >> /etc/apt/sources.list  && \
+    echo "deb-src http://mirrors.163.com/debian/ buster-updates main non-free contrib" >> /etc/apt/sources.list  && \
+    echo "deb-src http://mirrors.163.com/debian/ buster-backports main non-free contrib" >> /etc/apt/sources.list  && \
+    echo "deb http://mirrors.163.com/debian-security/ buster/updates main non-free contrib" >> /etc/apt/sources.list  && \
+    echo "deb-src http://mirrors.163.com/debian-security/ buster/updates main non-free contrib" >> /etc/apt/sources.list  && \
+    apt-get clean && \
+    apt-get update && \
     apt-get -y install git && \
     apt-get -y install wget && \
     apt-get -y install unzip && \
