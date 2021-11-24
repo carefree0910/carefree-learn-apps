@@ -1,9 +1,12 @@
+import random
+
 import numpy as np
 import streamlit as st
 
 from PIL import Image
 from skimage.transform import resize
 
+from .utils import info_retrieval
 from .utils import image_retrieval
 
 
@@ -15,6 +18,7 @@ def app() -> None:
         "Task",
         [
             "poster",
+            "caption",
         ],
         index=0,
     )
@@ -22,12 +26,16 @@ def app() -> None:
         img_type = "RGB"
         src_folder = "poster"
         gray = model.endswith("_shape")
+    elif task == "caption":
+        img_type = "RGB"
+        src_folder = "cbir.caption"
+        gray = None
     else:
         raise ValueError
 
     uploaded_file = st.file_uploader("Please upload your file")
     if uploaded_file is not None:
-        col1, *columns = st.columns(4)
+        col1, *columns = st.columns(4 if task == "poster" else 3)
         with st.spinner("Uploading image..."):
             image = Image.open(uploaded_file).convert(img_type)
             image.thumbnail((256, 256), Image.ANTIALIAS)
@@ -35,12 +43,24 @@ def app() -> None:
             img_arr = np.array(image)
             resized_img = resize(img_arr, (224, 224), mode="constant")
             resized_img = resized_img.astype(np.float32)
-            image_retrieval(
-                resized_img[None, ...],
-                src_folder,
-                "cbir",
-                top_k,
-                num_probe,
-                columns,
-                gray,
-            )
+            if task == "poster":
+                image_retrieval(
+                    resized_img[None, ...],
+                    src_folder,
+                    "cbir",
+                    top_k,
+                    num_probe,
+                    columns,
+                    gray,
+                )
+            elif task == "caption":
+                for info in info_retrieval(
+                    resized_img[None, ...],
+                    src_folder,
+                    "cbir.caption",
+                    top_k,
+                    num_probe,
+                    gray,
+                ):
+                    columns[0].text(random.choice(info.info))
+                    columns[1].text(info.distance)

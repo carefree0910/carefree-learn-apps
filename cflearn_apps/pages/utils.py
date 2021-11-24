@@ -1,4 +1,5 @@
 import os
+import json
 
 import numpy as np
 import streamlit as st
@@ -10,8 +11,10 @@ from typing import Dict
 from typing import List
 from typing import Callable
 from typing import Optional
+from typing import NamedTuple
 from cflearn_deploy.client import Client
 
+from ..constants import META_FOLDER
 from ..constants import IMAGES_FOLDER
 
 Image.MAX_IMAGE_PIXELS = None
@@ -57,3 +60,27 @@ def image_retrieval(
         if caption_callback is not None:
             caption = f"{caption}, {caption_callback(file)}"
         columns[i % 3].image(img, caption=caption)
+
+
+class Info(NamedTuple):
+    info: Any
+    distance: float
+
+
+def info_retrieval(
+    query: np.ndarray,
+    src_folder: str,
+    model: str,
+    top_k: int,
+    num_probe: int,
+    gray: Optional[bool] = None,
+) -> List[Info]:
+    info = get_info(model, query, top_k, num_probe, gray)
+    files, distances = info["files"], info["distances"]
+    src_folder = os.path.join(META_FOLDER, src_folder)
+    results = []
+    for i, (file, distance) in enumerate(zip(files, distances)):
+        name = os.path.splitext(file)[0]
+        with open(os.path.join(src_folder, f"{name}.json"), "r", encoding="utf-8") as f:
+            results.append(Info(json.load(f), distance))
+    return results
