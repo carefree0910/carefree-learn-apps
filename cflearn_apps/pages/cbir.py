@@ -1,5 +1,3 @@
-import random
-
 import numpy as np
 import streamlit as st
 
@@ -35,7 +33,7 @@ def app() -> None:
 
     uploaded_file = st.file_uploader("Please upload your file")
     if uploaded_file is not None:
-        col1, *columns = st.columns(4 if task == "poster" else 3)
+        col1, *columns = st.columns(2 if task == "caption" else 4)
         with st.spinner("Uploading image..."):
             image = Image.open(uploaded_file).convert(img_type)
             image.thumbnail((256, 256), Image.ANTIALIAS)
@@ -62,5 +60,4 @@ def app() -> None:
                     num_probe,
                     gray,
                 ):
-                    columns[0].text(random.choice(info.info))
-                    columns[1].text(info.distance)
+                    columns[0].selectbox(str(info.distance), info.info, 0)
