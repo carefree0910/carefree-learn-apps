@@ -17,6 +17,7 @@ def app() -> None:
         [
             "poster",
             "caption",
+            "material",
         ],
         index=0,
     )
@@ -26,7 +27,12 @@ def app() -> None:
         gray = model.endswith("_shape")
     elif task == "caption":
         img_type = "RGB"
-        src_folder = "cbir.caption"
+        model = src_folder = "cbir.caption"
+        gray = None
+    elif task == "material":
+        img_type = "RGB"
+        src_folder = "material"
+        model = "cbir.material"
         gray = None
     else:
         raise ValueError
@@ -41,11 +47,11 @@ def app() -> None:
             img_arr = np.array(image)
             resized_img = resize(img_arr, (224, 224), mode="constant")
             resized_img = resized_img.astype(np.float32)
-            if task == "poster":
+            if task in ("poster", "material"):
                 image_retrieval(
                     resized_img[None, ...],
                     src_folder,
-                    "cbir",
+                    model,
                     top_k,
                     num_probe,
                     columns,
@@ -55,7 +61,7 @@ def app() -> None:
                 for info in info_retrieval(
                     resized_img[None, ...],
                     src_folder,
-                    "cbir.caption",
+                    model,
                     top_k,
                     num_probe,
                     gray,
