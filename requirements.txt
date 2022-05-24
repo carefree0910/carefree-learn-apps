@@ -1,3 +1,0 @@
-streamlit
-git+git://github.com/carefree0910/carefree-learn-apps@main
-git+git://github.com/carefree0910/carefree-learn-deploy@dev

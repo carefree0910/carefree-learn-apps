@@ -2,7 +2,10 @@ import cflearn_apps
 import streamlit as st
 
 
-app = cflearn_apps.MultiPage()
+url = "carefree-learn-deploy:8000"
+client = cflearn_apps.Client(url=url)
+
+app = cflearn_apps.MultiPage(client)
 st.image(
     "https://socialify.git.ci/carefree0910/carefree-learn/image?"
     "description=1&descriptionEditable=Deep%20Learning%20%E2%9D%A4%EF%B8%8F%20"
@@ -16,11 +19,5 @@ st.sidebar.title(
     "(https://github.com/carefree0910/carefree-learn/tree/v0.2.x)"
 )
 
-app.add_page("Color Extraction", cflearn_apps.color_extraction.app)
 app.add_page("Salient Object Detection", cflearn_apps.sod.app)
-app.add_page("Content Based Image Retrieval", cflearn_apps.cbir.app)
-app.add_page("Text Based Image Retrieval", cflearn_apps.tbir.app)
-app.add_page("Arbitrary Style Transfer with AdaIN", cflearn_apps.adain.app)
-app.add_page("Image Classification", cflearn_apps.clf.app)
-app.add_page("Image Generation", cflearn_apps.generation.app)
 app.run()

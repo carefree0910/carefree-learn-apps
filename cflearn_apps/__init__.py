@@ -5,4 +5,5 @@ from .pages import tbir
 from .pages import adain
 from .pages import generation
 from .pages import color_extraction
+from .client import Client
 from .multipage import MultiPage

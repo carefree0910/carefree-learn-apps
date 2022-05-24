@@ -1,4 +1,4 @@
-FROM python:3.6-slim-buster AS builder
+FROM python:3.8-slim-buster AS builder
 WORKDIR /usr/home
 COPY . .
 
@@ -21,10 +21,10 @@ RUN rm /etc/apt/sources.list && \
     python -m venv .venv &&  \
     .venv/bin/pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     .venv/bin/pip install -U pip setuptools && \
-    .venv/bin/pip install -r requirements.txt --default-timeout=10000 && \
+    .venv/bin/pip install . --default-timeout=10000 && \
     find /usr/home/.venv \( -type d -a -name test -o -name tests \) -o \( -type f -a -name '*.pyc' -o -name '*.pyo' \) -exec rm -rf '{}' \+
 
-FROM python:3.6-slim
+FROM python:3.8-slim
 WORKDIR /usr/home
 COPY --from=builder /usr/home /usr/home
 COPY --from=builder /etc/apt/sources.list /etc/apt/sources.list
