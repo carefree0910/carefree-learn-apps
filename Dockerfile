@@ -12,6 +12,8 @@ FROM harbor.nolibox.com/base-image/ailab/noto-sans
 WORKDIR /usr/home
 COPY --from=builder /usr/home /usr/home
 COPY app.py app.py
+ENV PATH="/usr/home/.venv/bin:$PATH"
+ENV PYTHONPATH="/usr/home/.venv/lib/python3.8/site-packages:$PYTHONPATH"
 
 EXPOSE 8501
 ENTRYPOINT ["./streamlit", "run"]
