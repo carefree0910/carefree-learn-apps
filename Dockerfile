@@ -14,5 +14,5 @@ COPY --from=builder /usr/home /usr/home
 COPY app.py app.py
 
 EXPOSE 8501
-ENTRYPOINT ["streamlit", "run"]
+ENTRYPOINT ["./streamlit", "run"]
 CMD ["app.py"]
